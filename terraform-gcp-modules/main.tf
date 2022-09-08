@@ -15,26 +15,31 @@ provider "google" {
   zone    = "us-central1-c"
 }
 
-resource "google_compute_network" "network" {
-  name = "terraform-network"
-}
-resource "google_compute_instance" "vm_instance" {
-  name         = "terraform-instance"
-  machine_type = "f1-micro"
-  tags         = ["web", "dev"]
 
-  boot_disk {
-    initialize_params {
-      image = "cos-cloud/cos-stable"
-    }
-  }
 
-  network_interface {
-    network = google_compute_network.network.name
-    access_config {
-    }
-  }
+# module "vm" {
+#   source  = "terraform-google-modules/vm/google"
+#   version = "7.8.0"
+#   project_id  = "tempterraformproject"
+# # project
+
+#   labels = {
+#     project     = "terraform-practice",
+#     environment = "dev"
+#     component = "GCP-module-learning"
+#   }
+# }
+
+resource "random_id" "bucket_prefix" {
+  byte_length = 8
 }
 
-
-# terraform import google_compute_network.network terraform-network
+resource "google_storage_bucket" "default" {
+  name          = "${random_id.bucket_prefix.hex}-bucket-tfstate"
+  force_destroy = false
+  location      = "ASIA"
+  storage_class = "STANDARD"
+  versioning {
+    enabled = true
+  }
+}
