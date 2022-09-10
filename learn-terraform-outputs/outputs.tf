@@ -23,3 +23,8 @@ output "db_password" {
   value       = aws_db_instance.database.password
   sensitive   = true
 }
+
+output "aws_region" {
+  description = "AWS region"
+  value       = data.aws_region.current.name
+}

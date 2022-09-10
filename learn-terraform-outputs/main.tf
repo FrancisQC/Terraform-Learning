@@ -1,4 +1,10 @@
 terraform {
+   cloud {
+    organization = "Cashreturn"
+    workspaces {
+      name = "learn-tf-aws"
+    }
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -9,6 +15,7 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
+  
 }
 
 data "aws_availability_zones" "available" {
@@ -28,6 +35,17 @@ module "vpc" {
   enable_nat_gateway = true
   enable_vpn_gateway = false
 }
+data "aws_region" "current" { }
+
+data "aws_availability_zones" "available" {
+  state = "available"
+
+  filter {
+    name   = "zone-type"
+    values = ["availability-zone"]
+  }
+}
+
 
 module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
